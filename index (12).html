@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Image Compressor & Converter</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #2b2b2b; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px 0; }
+    .card { background: #1e1e1e; max-width: 420px; width: 90%; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+    h2 { margin-top: 0; font-weight: 500; }
+    .img-box { background: #333; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
+    img { max-width: 100%; max-height: 220px; border-radius: 4px; display: none; margin: 0 auto; }
+    .size-text { color: #bbb; margin-top: 10px; font-size: 14px; }
+    
+    .btn { background: #383838; color: #4CAF50; border: none; padding: 12px 24px; font-weight: bold; font-size: 14px; border-radius: 4px; cursor: pointer; text-transform: uppercase; border-bottom: 2px solid #4CAF50; }
+    .btn:hover { background: #444; }
+    
+    .section-title { font-size: 13px; color: #aaa; margin-top: 15px; text-transform: uppercase; letter-spacing: 0.5px; text-align: left; margin-left: 5px; }
+    
+    .input-group { margin: 8px 0 15px 0; display: flex; justify-content: center; align-items: center; gap: 10px; }
+    input[type="number"] { width: 85px; padding: 8px; border: none; border-bottom: 2px solid #4CAF50; background: transparent; color: white; text-align: center; font-size: 15px; outline: none; }
+    select { padding: 8px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px; font-size: 14px; outline: none; cursor: pointer; }
+    
+    input[type="file"] { display: none; }
+    .btn-compress { width: 100%; margin-top: 15px; background: #383838; color: #2196F3; border-bottom-color: #2196F3; }
+    a.download-btn { display: none; margin-top: 15px; background: #4CAF50; color: white; text-decoration: none; padding: 12px; border-radius: 4px; text-align: center; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Compress & Convert</h2>
+  
+  <div class="img-box">
+    <img id="preview" alt="Preview">
+    <p id="fileSizeText" class="size-text">No image selected</p>
+  </div>
+
+  <button class="btn" onclick="document.getElementById('upload').click()">CHOOSE PHOTO</button>
+  <input type="file" id="upload" accept="image/*">
+
+  <!-- Format Selection -->
+  <div class="section-title">Output Format</div>
+  <div class="input-group">
+    <select id="formatSelect" style="width: 100%;">
+      <option value="image/jpeg">JPG / JPEG</option>
+      <option value="image/png">PNG</option>
+      <option value="image/webp">WEBP (Best Web Compression)</option>
+    </select>
+  </div>
+
+  <!-- Resolution Resize -->
+  <div class="section-title">Resize Resolution (Px)</div>
+  <div class="input-group">
+    <input type="number" id="widthInput" placeholder="Width">
+    <span>x</span>
+    <input type="number" id="heightInput" placeholder="Height">
+  </div>
+
+  <!-- Target File Size -->
+  <div class="section-title">Compress to file size below</div>
+  <div class="input-group">
+    <input type="number" id="targetSize" value="1" min="1">
+    <select id="unit">
+      <option value="MB" selected>MB</option>
+      <option value="KB">KB</option>
+    </select>
+  </div>
+
+  <button class="btn btn-compress" id="compressBtn">PROCESS IMAGE</button>
+  
+  <a id="downloadBtn" class="download-btn" download="processed-image">DOWNLOAD IMAGE</a>
+</div>
+
+<script>
+  const upload = document.getElementById('upload');
+  const preview = document.getElementById('preview');
+  const fileSizeText = document.getElementById('fileSizeText');
+  const compressBtn = document.getElementById('compressBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const widthInput = document.getElementById('widthInput');
+  const heightInput = document.getElementById('heightInput');
+
+  let originalFile = null;
+  let originalWidth = 0;
+  let originalHeight = 0;
+
+  upload.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+      originalFile = e.target.files[0];
+      
+      const img = new Image();
+      img.src = URL.createObjectURL(originalFile);
+      img.onload = () => {
+        originalWidth = img.width;
+        originalHeight = img.height;
+        widthInput.value = originalWidth;
+        heightInput.value = originalHeight;
+        
+        preview.src = img.src;
+        preview.style.display = 'block';
+
+        const kb = originalFile.size / 1024;
+        const mb = kb / 1024;
+        fileSizeText.textContent = `Original: ${kb.toFixed(1)} KB (${originalWidth}x${originalHeight} px)`;
+        downloadBtn.style.display = 'none';
+      };
+    }
+  });
+
+  // Maintain Aspect Ratio automatically
+  widthInput.addEventListener('input', () => {
+    if (originalWidth > 0) {
+      heightInput.value = Math.round((widthInput.value / originalWidth) * originalHeight);
+    }
+  });
+
+  compressBtn.addEventListener('click', () => {
+    if (!originalFile) {
+      alert("Pehle image select karein!");
+      return;
+    }
+
+    const format = document.getElementById('formatSelect').value;
+    const targetVal = parseFloat(document.getElementById('targetSize').value);
+    const unit = document.getElementById('unit').value;
+    let targetBytes = unit === 'MB' ? targetVal * 1024 * 1024 : targetVal * 1024;
+
+    const newWidth = parseInt(widthInput.value) || originalWidth;
+    const newHeight = parseInt(heightInput.value) || originalHeight;
+
+    const reader = new FileReader();
+    reader.readAsDataURL(originalFile);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+        // Extension setup
+        let ext = "jpg";
+        if (format === "image/png") ext = "png";
+        if (format === "image/webp") ext = "webp";
+
+        let bestDataUrl = '';
+        
+        if (format === "image/png") {
+          // PNG compression is lossless in Canvas API
+          bestDataUrl = canvas.toDataURL(format);
+        } else {
+          // Binary Search for JPEG/WEBP Quality
+          let minQuality = 0.01;
+          let maxQuality = 1.0;
+          let compressedDataUrl = '';
+
+          for (let i = 0; i < 7; i++) {
+            let midQuality = (minQuality + maxQuality) / 2;
+            compressedDataUrl = canvas.toDataURL(format, midQuality);
+            let sizeInBytes = Math.round((compressedDataUrl.length * 3 / 4));
+
+            if (sizeInBytes <= targetBytes) {
+              bestDataUrl = compressedDataUrl;
+              minQuality = midQuality;
+            } else {
+              maxQuality = midQuality;
+            }
+          }
+          if (!bestDataUrl) bestDataUrl = compressedDataUrl;
+        }
+
+        const finalSizeKB = (bestDataUrl.length * 3 / 4) / 1024;
+        fileSizeText.textContent = `New Size: ~${finalSizeKB.toFixed(1)} KB (${newWidth}x${newHeight} px)`;
+        preview.src = bestDataUrl;
+
+        downloadBtn.href = bestDataUrl;
+        downloadBtn.download = `compressed-image.${ext}`;
+        downloadBtn.style.display = 'block';
+      };
+    };
+  });
+</script>
+
+</body>
+</html>
