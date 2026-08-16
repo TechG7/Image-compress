@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- SEO Meta Tags -->
   <title>Free Online Image Compressor & Converter | TechG7</title>
   <meta name="description" content="Compress JPG, PNG, and WebP images online for free without losing quality. Fast, secure, and easy-to-use image compressor tool hosted by TechG7.">
   <meta name="keywords" content="techg7 image compress, image compressor, reduce image size, compress jpg online, png compressor, webp converter">
@@ -49,7 +48,6 @@
       align-items: center;
     }
 
-    /* Top Navigation / Header with Theme Toggle */
     .header {
       width: 100%;
       max-width: 800px;
@@ -72,7 +70,6 @@
       gap: 6px;
     }
 
-    /* Main Container (Centered) */
     .wrapper {
       display: flex;
       flex-direction: column;
@@ -83,7 +80,6 @@
       align-items: center;
     }
 
-    /* Tool Card */
     .card { 
       background: var(--card-bg); 
       max-width: 450px; 
@@ -112,7 +108,6 @@
     .btn-compress { width: 100%; margin-top: 15px; background: var(--btn-bg); color: var(--accent-color); border-bottom-color: var(--accent-color); }
     a.download-btn { display: none; margin-top: 15px; background: var(--primary-color); color: white; text-decoration: none; padding: 12px; border-radius: 4px; text-align: center; font-weight: bold; }
     
-    /* Content Footer Section */
     .seo-content { 
       width: 100%; 
       background: var(--card-bg); 
@@ -137,7 +132,6 @@
 </div>
 
 <div class="wrapper">
-  <!-- Tool Card (Main Section) -->
   <div class="card">
     <h2>Compress & Convert</h2>
     
@@ -149,7 +143,6 @@
     <button class="btn" onclick="document.getElementById('upload').click()">CHOOSE PHOTO</button>
     <input type="file" id="upload" accept="image/*">
 
-    <!-- Format Selection -->
     <div class="section-title">Output Format</div>
     <div class="input-group">
       <select id="formatSelect" style="width: 100%;">
@@ -159,7 +152,6 @@
       </select>
     </div>
 
-    <!-- Resolution Resize -->
     <div class="section-title">Resize Resolution (Px)</div>
     <div class="input-group">
       <input type="number" id="widthInput" placeholder="Width">
@@ -167,13 +159,12 @@
       <input type="number" id="heightInput" placeholder="Height">
     </div>
 
-    <!-- Target File Size -->
     <div class="section-title">Compress to file size below</div>
     <div class="input-group">
-      <input type="number" id="targetSize" value="1" min="1">
+      <input type="number" id="targetSize" value="500" min="1">
       <select id="unit">
-        <option value="MB" selected>MB</option>
-        <option value="KB">KB</option>
+        <option value="KB" selected>KB</option>
+        <option value="MB">MB</option>
       </select>
     </div>
 
@@ -182,7 +173,6 @@
     <a id="downloadBtn" class="download-btn" download="processed-image">DOWNLOAD IMAGE</a>
   </div>
 
-  <!-- SEO Content Section (Footer Area) -->
   <div class="seo-content">
     <h1>Free Online Image Compressor & Converter Tool</h1>
     <p>Welcome to <strong>TechG7 Image Compressor</strong>. Easily reduce image sizes, resize pixel dimensions, and convert images into web-friendly formats like JPG, PNG, and WebP.</p>
@@ -212,7 +202,7 @@
 </div>
 
 <script>
-  // Theme Toggle Functionality
+  // Theme Toggle
   const themeToggleBtn = document.getElementById('themeToggle');
   const currentTheme = localStorage.getItem('theme') || 'dark';
 
@@ -242,6 +232,9 @@
   const downloadBtn = document.getElementById('downloadBtn');
   const widthInput = document.getElementById('widthInput');
   const heightInput = document.getElementById('heightInput');
+  const formatSelect = document.getElementById('formatSelect');
+  const targetSizeInput = document.getElementById('targetSize');
+  const unitSelect = document.getElementById('unit');
 
   let originalFile = null;
   let originalWidth = 0;
@@ -269,11 +262,67 @@
     }
   });
 
-  // Maintain Aspect Ratio automatically
   widthInput.addEventListener('input', () => {
     if (originalWidth > 0) {
       heightInput.value = Math.round((widthInput.value / originalWidth) * originalHeight);
     }
+  });
+
+  // Working Compression Logic
+  compressBtn.addEventListener('click', () => {
+    if (!originalFile) {
+      alert('Please choose an image first!');
+      return;
+    }
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    const targetWidth = parseInt(widthInput.value) || originalWidth;
+    const targetHeight = parseInt(heightInput.value) || originalHeight;
+    
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+
+    const img = new Image();
+    img.src = preview.src;
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+      
+      const format = formatSelect.value;
+      let targetSizeBytes = parseFloat(targetSizeInput.value) * (unitSelect.value === 'MB' ? 1024 * 1024 : 1024);
+
+      let minQuality = 0.05;
+      let maxQuality = 0.95;
+      let optimalQuality = 0.8;
+
+      // Iterative Compression to match target size
+      let dataUrl;
+      for (let i = 0; i < 6; i++) {
+        dataUrl = canvas.toDataURL(format, optimalQuality);
+        const currentSizeBytes = Math.round((dataUrl.length - 22) * 3 / 4);
+
+        if (currentSizeBytes > targetSizeBytes && optimalQuality > minQuality) {
+          maxQuality = optimalQuality;
+          optimalQuality = (minQuality + maxQuality) / 2;
+        } else if (currentSizeBytes < targetSizeBytes && optimalQuality < maxQuality) {
+          minQuality = optimalQuality;
+          optimalQuality = (minQuality + maxQuality) / 2;
+        } else {
+          break;
+        }
+      }
+
+      const finalSizeKB = (Math.round((dataUrl.length - 22) * 3 / 4) / 1024).toFixed(1);
+
+      preview.src = dataUrl;
+      fileSizeText.textContent = `Compressed Size: ${finalSizeKB} KB (${targetWidth}x${targetHeight} px)`;
+      
+      let ext = format.split('/')[1];
+      downloadBtn.href = dataUrl;
+      downloadBtn.download = `compressed-image.${ext}`;
+      downloadBtn.style.display = 'inline-block';
+    };
   });
 </script>
 
