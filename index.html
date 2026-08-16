@@ -11,90 +11,133 @@
   <meta name="author" content="TechG7">
 
   <style>
-    * { box-sizing: border-box; }
-    body { 
-      font-family: Arial, sans-serif; 
-      background-color: #2b2b2b; 
-      color: #fff; 
-      margin: 0; 
-      padding: 30px 15px; 
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+    :root {
+      --bg-color: #2b2b2b;
+      --card-bg: #1e1e1e;
+      --text-color: #ffffff;
+      --subtext-color: #cccccc;
+      --border-color: #333333;
+      --input-bg: #2b2b2b;
+      --btn-bg: #383838;
+      --primary-color: #4CAF50;
+      --accent-color: #2196F3;
     }
 
-    /* Main Container with Responsive Layout */
+    [data-theme="light"] {
+      --bg-color: #f4f5f7;
+      --card-bg: #ffffff;
+      --text-color: #222222;
+      --subtext-color: #555555;
+      --border-color: #e0e0e0;
+      --input-bg: #ffffff;
+      --btn-bg: #e8e8e8;
+      --primary-color: #2e7d32;
+      --accent-color: #1976d2;
+    }
+
+    * { box-sizing: border-box; transition: background-color 0.3s, color 0.3s; }
+    
+    body { 
+      font-family: Arial, sans-serif; 
+      background-color: var(--bg-color); 
+      color: var(--text-color); 
+      margin: 0; 
+      padding: 20px 15px; 
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Top Navigation / Header with Theme Toggle */
+    .header {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+    }
+
+    .theme-btn {
+      background: var(--btn-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Main Container (Centered) */
     .wrapper {
       display: flex;
       flex-direction: column;
-      gap: 30px;
-      max-width: 1100px;
+      gap: 40px;
+      max-width: 800px;
       width: 100%;
       margin: 0 auto;
       align-items: center;
     }
 
-    /* Desktop Responsive Layout (Side-by-Side) */
-    @media (min-width: 850px) {
-      .wrapper {
-        flex-direction: row;
-        align-items: flex-start;
-        justify-content: center;
-      }
-    }
-
+    /* Tool Card */
     .card { 
-      background: #1e1e1e; 
+      background: var(--card-bg); 
       max-width: 450px; 
       width: 100%; 
       padding: 24px; 
       border-radius: 12px; 
       text-align: center; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
-      flex-shrink: 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15); 
     }
+
     h2 { margin-top: 0; font-weight: 500; }
-    .img-box { background: #333; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
+    .img-box { background: var(--btn-bg); padding: 10px; border-radius: 8px; margin-bottom: 15px; }
     img { max-width: 100%; max-height: 220px; border-radius: 4px; display: none; margin: 0 auto; }
-    .size-text { color: #bbb; margin-top: 10px; font-size: 14px; }
+    .size-text { color: var(--subtext-color); margin-top: 10px; font-size: 14px; }
     
-    .btn { background: #383838; color: #4CAF50; border: none; padding: 12px 24px; font-weight: bold; font-size: 14px; border-radius: 4px; cursor: pointer; text-transform: uppercase; border-bottom: 2px solid #4CAF50; }
-    .btn:hover { background: #444; }
+    .btn { background: var(--btn-bg); color: var(--primary-color); border: none; padding: 12px 24px; font-weight: bold; font-size: 14px; border-radius: 4px; cursor: pointer; text-transform: uppercase; border-bottom: 2px solid var(--primary-color); }
+    .btn:hover { filter: brightness(0.9); }
     
-    .section-title { font-size: 13px; color: #aaa; margin-top: 15px; text-transform: uppercase; letter-spacing: 0.5px; text-align: left; margin-left: 5px; }
+    .section-title { font-size: 13px; color: var(--subtext-color); margin-top: 15px; text-transform: uppercase; letter-spacing: 0.5px; text-align: left; margin-left: 5px; }
     
     .input-group { margin: 8px 0 15px 0; display: flex; justify-content: center; align-items: center; gap: 10px; }
-    input[type="number"] { width: 85px; padding: 8px; border: none; border-bottom: 2px solid #4CAF50; background: transparent; color: white; text-align: center; font-size: 15px; outline: none; }
-    select { padding: 8px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px; font-size: 14px; outline: none; cursor: pointer; }
+    input[type="number"] { width: 85px; padding: 8px; border: none; border-bottom: 2px solid var(--primary-color); background: transparent; color: var(--text-color); text-align: center; font-size: 15px; outline: none; }
+    select { padding: 8px; background: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; outline: none; cursor: pointer; }
     
     input[type="file"] { display: none; }
-    .btn-compress { width: 100%; margin-top: 15px; background: #383838; color: #2196F3; border-bottom-color: #2196F3; }
-    a.download-btn { display: none; margin-top: 15px; background: #4CAF50; color: white; text-decoration: none; padding: 12px; border-radius: 4px; text-align: center; font-weight: bold; }
+    .btn-compress { width: 100%; margin-top: 15px; background: var(--btn-bg); color: var(--accent-color); border-bottom-color: var(--accent-color); }
+    a.download-btn { display: none; margin-top: 15px; background: var(--primary-color); color: white; text-decoration: none; padding: 12px; border-radius: 4px; text-align: center; font-weight: bold; }
     
-    /* Content Section Styling for Desktop & Mobile */
+    /* Content Footer Section */
     .seo-content { 
-      flex-grow: 1; 
       width: 100%; 
-      background: #1e1e1e; 
-      padding: 25px; 
+      background: var(--card-bg); 
+      padding: 30px; 
       border-radius: 12px; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15); 
       text-align: left; 
       line-height: 1.6; 
     }
-    .seo-content h1, .seo-content h2 { color: #4CAF50; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 15px; font-size: 18px; }
-    .seo-content p, .seo-content li { color: #ccc; font-size: 14px; }
+    .seo-content h1, .seo-content h2 { color: var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 20px; font-size: 18px; }
+    .seo-content p, .seo-content li { color: var(--subtext-color); font-size: 14px; }
     .seo-content ul, .seo-content ol { padding-left: 20px; }
     .seo-content li { margin-bottom: 8px; }
     .faq-item { margin-bottom: 15px; }
-    .faq-item h3 { color: #2196F3; font-size: 15px; margin-bottom: 5px; }
+    .faq-item h3 { color: var(--accent-color); font-size: 15px; margin-bottom: 5px; }
   </style>
 </head>
 <body>
 
+<div class="header">
+  <button class="theme-btn" id="themeToggle">☀️ Light Mode</button>
+</div>
+
 <div class="wrapper">
-  <!-- Tool Card (Left Side on Desktop) -->
+  <!-- Tool Card (Main Section) -->
   <div class="card">
     <h2>Compress & Convert</h2>
     
@@ -139,7 +182,7 @@
     <a id="downloadBtn" class="download-btn" download="processed-image">DOWNLOAD IMAGE</a>
   </div>
 
-  <!-- SEO Text Content Section (Right Side on Desktop) -->
+  <!-- SEO Content Section (Footer Area) -->
   <div class="seo-content">
     <h1>Free Online Image Compressor & Converter Tool</h1>
     <p>Welcome to <strong>TechG7 Image Compressor</strong>. Easily reduce image sizes, resize pixel dimensions, and convert images into web-friendly formats like JPG, PNG, and WebP.</p>
@@ -169,6 +212,29 @@
 </div>
 
 <script>
+  // Theme Toggle Functionality
+  const themeToggleBtn = document.getElementById('themeToggle');
+  const currentTheme = localStorage.getItem('theme') || 'dark';
+
+  if (currentTheme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    themeToggleBtn.textContent = '🌙 Dark Mode';
+  }
+
+  themeToggleBtn.addEventListener('click', () => {
+    let theme = document.documentElement.getAttribute('data-theme');
+    if (theme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+      themeToggleBtn.textContent = '☀️ Light Mode';
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('theme', 'light');
+      themeToggleBtn.textContent = '🌙 Dark Mode';
+    }
+  });
+
+  // Image Compressor Script
   const upload = document.getElementById('upload');
   const preview = document.getElementById('preview');
   const fileSizeText = document.getElementById('fileSizeText');
