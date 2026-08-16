@@ -3,9 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Advanced Image Compressor & Converter</title>
+  
+  <!-- SEO Meta Tags -->
+  <title>Free Online Image Compressor & Converter | TechG7</title>
+  <meta name="description" content="Compress JPG, PNG, and WebP images online for free without losing quality. Fast, secure, and easy-to-use image compressor tool hosted by TechG7.">
+  <meta name="keywords" content="techg7 image compress, image compressor, reduce image size, compress jpg online, png compressor, webp converter">
+  <meta name="author" content="TechG7">
+
   <style>
-    body { font-family: Arial, sans-serif; background-color: #2b2b2b; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px 0; }
+    body { font-family: Arial, sans-serif; background-color: #2b2b2b; color: #fff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding: 20px 0; }
     .card { background: #1e1e1e; max-width: 420px; width: 90%; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
     h2 { margin-top: 0; font-weight: 500; }
     .img-box { background: #333; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
@@ -24,6 +30,15 @@
     input[type="file"] { display: none; }
     .btn-compress { width: 100%; margin-top: 15px; background: #383838; color: #2196F3; border-bottom-color: #2196F3; }
     a.download-btn { display: none; margin-top: 15px; background: #4CAF50; color: white; text-decoration: none; padding: 12px; border-radius: 4px; text-align: center; font-weight: bold; }
+    
+    /* Content Section Styling for SEO */
+    .seo-content { max-width: 600px; width: 90%; margin-top: 40px; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); text-align: left; line-height: 1.6; }
+    .seo-content h1, .seo-content h2 { color: #4CAF50; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 20px; font-size: 20px; }
+    .seo-content p, .seo-content li { color: #ccc; font-size: 14px; }
+    .seo-content ul, .seo-content ol { padding-left: 20px; }
+    .seo-content li { margin-bottom: 8px; }
+    .faq-item { margin-bottom: 15px; }
+    .faq-item h3 { color: #2196F3; font-size: 16px; margin-bottom: 5px; }
   </style>
 </head>
 <body>
@@ -72,6 +87,38 @@
   <a id="downloadBtn" class="download-btn" download="processed-image">DOWNLOAD IMAGE</a>
 </div>
 
+<!-- SEO Text Content Section -->
+<div class="seo-content">
+  <h1>Free Online Image Compressor & Converter Tool</h1>
+  <p>Welcome to the <strong>TechG7 Image Compressor</strong>. This free online utility lets you reduce your image file size, resize dimensions in pixels, and convert images into various web-friendly formats such as JPG, PNG, and WebP without sacrificing quality.</p>
+  
+  <h2>Key Features</h2>
+  <ul>
+    <li><strong>Smart Compression:</strong> Shrink MBs to KBs easily for fast web page loading.</li>
+    <li><strong>Multiple Format Options:</strong> Easily convert images to WebP, JPG, or PNG formats.</li>
+    <li><strong>Custom Pixel Resizing:</strong> Adjust width and height resolution to fit your precise needs.</li>
+    <li><strong>100% Secure & Private:</strong> All operations happen client-side inside your browser. Your images are never saved on external servers.</li>
+  </ul>
+
+  <h2>How to Compress & Resize Images</h2>
+  <ol>
+    <li>Click <strong>CHOOSE PHOTO</strong> to upload your image file.</li>
+    <li>Select your preferred output image format (JPG, PNG, or WEBP).</li>
+    <li>Enter target width/height or set a custom target file size limit.</li>
+    <li>Click <strong>PROCESS IMAGE</strong> and then download your optimized file instantly!</li>
+  </ol>
+
+  <h2>Frequently Asked Questions (FAQs)</h2>
+  <div class="faq-item">
+    <h3>Q: Why should I compress my images?</h3>
+    <p>Smaller image file sizes improve website speed, boost search engine rankings (SEO), reduce mobile data consumption, and save digital storage space.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Q: Is this image compressor tool safe?</h3>
+    <p>Yes! Since all processing happens in real-time within your local browser JavaScript engine, your privacy is fully protected.</p>
+  </div>
+</div>
+
 <script>
   const upload = document.getElementById('upload');
   const preview = document.getElementById('preview');
@@ -101,7 +148,6 @@
         preview.style.display = 'block';
 
         const kb = originalFile.size / 1024;
-        const mb = kb / 1024;
         fileSizeText.textContent = `Original: ${kb.toFixed(1)} KB (${originalWidth}x${originalHeight} px)`;
         downloadBtn.style.display = 'none';
       };
@@ -114,74 +160,7 @@
       heightInput.value = Math.round((widthInput.value / originalWidth) * originalHeight);
     }
   });
-
-  compressBtn.addEventListener('click', () => {
-    if (!originalFile) {
-      alert("Pehle image select karein!");
-      return;
-    }
-
-    const format = document.getElementById('formatSelect').value;
-    const targetVal = parseFloat(document.getElementById('targetSize').value);
-    const unit = document.getElementById('unit').value;
-    let targetBytes = unit === 'MB' ? targetVal * 1024 * 1024 : targetVal * 1024;
-
-    const newWidth = parseInt(widthInput.value) || originalWidth;
-    const newHeight = parseInt(heightInput.value) || originalHeight;
-
-    const reader = new FileReader();
-    reader.readAsDataURL(originalFile);
-    reader.onload = (event) => {
-      const img = new Image();
-      img.src = event.target.result;
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = newWidth;
-        canvas.height = newHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, newWidth, newHeight);
-
-        // Extension setup
-        let ext = "jpg";
-        if (format === "image/png") ext = "png";
-        if (format === "image/webp") ext = "webp";
-
-        let bestDataUrl = '';
-        
-        if (format === "image/png") {
-          // PNG compression is lossless in Canvas API
-          bestDataUrl = canvas.toDataURL(format);
-        } else {
-          // Binary Search for JPEG/WEBP Quality
-          let minQuality = 0.01;
-          let maxQuality = 1.0;
-          let compressedDataUrl = '';
-
-          for (let i = 0; i < 7; i++) {
-            let midQuality = (minQuality + maxQuality) / 2;
-            compressedDataUrl = canvas.toDataURL(format, midQuality);
-            let sizeInBytes = Math.round((compressedDataUrl.length * 3 / 4));
-
-            if (sizeInBytes <= targetBytes) {
-              bestDataUrl = compressedDataUrl;
-              minQuality = midQuality;
-            } else {
-              maxQuality = midQuality;
-            }
-          }
-          if (!bestDataUrl) bestDataUrl = compressedDataUrl;
-        }
-
-        const finalSizeKB = (bestDataUrl.length * 3 / 4) / 1024;
-        fileSizeText.textContent = `New Size: ~${finalSizeKB.toFixed(1)} KB (${newWidth}x${newHeight} px)`;
-        preview.src = bestDataUrl;
-
-        downloadBtn.href = bestDataUrl;
-        downloadBtn.download = `compressed-image.${ext}`;
-        downloadBtn.style.display = 'block';
-      };
-    };
-  });
 </script>
+
 </body>
 </html>
