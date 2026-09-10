@@ -1,5 +1,5 @@
-const CACHE_NAME = 'pwa-v1';
-const urlsToCache = ['/', '/index.html'];
+const CACHE_NAME = 'Image-compress-v1';
+const urlsToCache = ['Image-compress/', 'Image-compress/index.html'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
