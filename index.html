@@ -10,6 +10,8 @@
   <meta name="author" content="TechG7">
 <meta property="og:site_name" content="TechG7">
 <meta property="og:title" content="Free Online Image Compressor & Converter | TechG7">
+  <link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#2b2b2b">
   
   <style>
     :root {
@@ -333,7 +335,7 @@
 // 1. Service Worker Register
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js');
+    navigator.serviceWorker.register('./sw.js');
   });
 }
 
