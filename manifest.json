@@ -1,7 +1,8 @@
 {
   "name": "Image Compressor & Converter",
   "short_name": "Images compressor",
-  "start_url": "/",
+  "discription": "Free Online Image Compressor & Converter Tool",
+  "start_url": "/image compresser",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
