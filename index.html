@@ -328,6 +328,46 @@
       downloadBtn.style.display = 'inline-block';
     };
   });
+  // === PWA Service Worker & Install Button Logic ===
+
+// 1. Service Worker Register
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js');
+  });
+}
+
+// 2. Install Button Hide/Show Logic
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn'); // Dhayan rakhein HTML me ye ID ho
+
+if (installBtn) {
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    installBtn.style.display = 'none';
+  }
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'inline-block';
+  });
+
+  installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      installBtn.style.display = 'none';
+    }
+    deferredPrompt = null;
+  });
+
+  window.addEventListener('appinstalled', () => {
+    installBtn.style.display = 'none';
+    deferredPrompt = null;
+  });
+}
+  
 </script>
 
 </body>
